@@ -8,23 +8,20 @@ module NewRelic
     module Instrumentation
       module Hanami
         include ControllerInstrumentation
-        NAME_REGEX = /Controllers::/.freeze
+        def call(params)
+          trace_options = _trace_options(params)
 
-      protected
-
-        def finish
-          perform_action_with_newrelic_trace(_trace_options) do
+          perform_action_with_newrelic_trace(**trace_options) do
             super
           end
         end
 
-      private
+        private
 
-        def _trace_options
+        def _trace_options(params)
           {
             category: :controller,
-            name:     self.class.name.sub(NAME_REGEX, ''),
-            request:  request,
+            request:  self,
             params:   params.to_h
           }
         end
@@ -37,8 +34,8 @@ DependencyDetection.defer do
   @name = :hanami
 
   depends_on do
-    defined?(::Hanami) &&
-      !::NewRelic::Control.instance['disable_hanami'] &&
+    defined?(Hanami) &&
+      !NewRelic::Control.instance['disable_hanami'] &&
       !ENV['DISABLE_NEW_RELIC_HANAMI']
   end
 
@@ -47,10 +44,6 @@ DependencyDetection.defer do
   end
 
   executes do
-    ::Hanami::Controller.configure do
-      prepare do
-        include ::NewRelic::Agent::Instrumentation::Hanami
-      end
-    end
+    Hanami::Action.prepend(NewRelic::Agent::Instrumentation::Hanami)
   end
 end
