@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe NewRelic::Agent::Instrumentation::Hanami do
+describe NewRelic::Agent::Instrumentation::Hanami::ActionTransaction do
   let(:instance) { klass.new }
 
   before do
