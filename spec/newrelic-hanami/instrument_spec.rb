@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe NewRelic::Agent::Instrumentation::Hanami do
   let(:instance) { klass.new }
 
@@ -15,9 +17,9 @@ describe NewRelic::Agent::Instrumentation::Hanami do
 
     it 'passes-through the response headers' do
       expect(response.headers).to eq({
-        'Content-Length' => response.body.first.length.to_s,
-        'Content-Type'   =>  'application/octet-stream; charset=utf-8'
-      })
+                                       'Content-Length' => response.body.first.length.to_s,
+                                       'Content-Type' => 'application/octet-stream; charset=utf-8'
+                                     })
     end
 
     it 'passes-through the response body' do
@@ -70,5 +72,4 @@ describe NewRelic::Agent::Instrumentation::Hanami do
 
     it_behaves_like 'a Hanami::Action'
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'new_relic/agent/instrumentation'
 require 'new_relic/agent/instrumentation/controller_instrumentation'
 require 'hanami/controller'
@@ -6,6 +8,7 @@ require 'rack'
 module NewRelic
   module Agent
     module Instrumentation
+      # Wraps every Hanami::Action in NewRelic tracing
       module Hanami
         include ControllerInstrumentation
         def call(params)
@@ -21,8 +24,8 @@ module NewRelic
         def _trace_options(params)
           {
             category: :controller,
-            request:  self,
-            params:   params.to_h
+            request: self,
+            params: params.to_h
           }
         end
       end
