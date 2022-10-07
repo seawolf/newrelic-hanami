@@ -10,13 +10,21 @@ module NewRelic
           private
 
           def _run_before_callbacks(*)
-            Segment.in(name: 'before') do
+            if self.class.before_callbacks.send(:chain).any?
+              Segment.in(name: 'before') do
+                super
+              end
+            else
               super
             end
           end
 
           def _run_after_callbacks(*)
-            Segment.in(name: 'after') do
+            if self.class.after_callbacks.send(:chain).any?
+              Segment.in(name: 'after') do
+                super
+              end
+            else
               super
             end
           end
