@@ -5,6 +5,7 @@ require 'newrelic-hanami/segment'
 
 require 'newrelic-hanami/instrumentation/action_transaction'
 require 'newrelic-hanami/instrumentation/action_handle_segment'
+require 'newrelic-hanami/instrumentation/action_callback_segments'
 
 DependencyDetection.defer do
   @name = :hanami
@@ -32,5 +33,10 @@ DependencyDetection.defer do
   executes do
     NewRelic::Agent.logger.info 'Installing Hanami::Action.call instrumentation'
     Hanami::Action.prepend(::NewRelic::Agent::Instrumentation::Hanami::ActionTransaction)
+  end
+
+  executes do
+    NewRelic::Agent.logger.info 'Installing Hanami::Action callbacks instrumentation'
+    Hanami::Action.prepend(::NewRelic::Agent::Instrumentation::Hanami::ActionCallbackSegments)
   end
 end
