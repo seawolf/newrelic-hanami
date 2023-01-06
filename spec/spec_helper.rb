@@ -109,8 +109,15 @@ require 'hanami/controller'
 require 'newrelic_rpm'
 require 'newrelic-hanami'
 
+require 'rack/test'
+
+shared_examples = File.join(File.dirname(__FILE__), 'support', 'shared_examples', '*.rb')
+Dir.glob(shared_examples).map { require _1 }
+
 RSpec.configure do |config|
   config.before(:suite) do
     DependencyDetection.detect!
+
+    load 'spec/support/apps/hanami-controller-2.0.x/app.rb'
   end
 end

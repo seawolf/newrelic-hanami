@@ -26,5 +26,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop'
 
+  # for RSpecs against sample Hanami apps (in spec/support/apps)
+  spec.add_development_dependency 'hanami-router', '~> 2.0.0.alpha'
+  spec.add_development_dependency 'rack-test'
+  spec.add_development_dependency 'webrick'
+
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
