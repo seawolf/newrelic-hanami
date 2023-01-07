@@ -25,7 +25,7 @@ describe NewRelic::Agent::Instrumentation::Hanami do
 
     it 'traces the action with amended options (corrected name, etc.)' do
       expect_any_instance_of(NewRelic::Agent::Transaction).to receive(:commit!)
-        .with("Controller/Web/Controllers/CustomersDatabase/Index")
+        .with('Controller/Web/Controllers/CustomersDatabase/Index/call')
 
       response
     end
@@ -48,7 +48,7 @@ describe NewRelic::Agent::Instrumentation::Hanami do
 
     it 'traces the action with amended options (corrected name, etc.)' do
       expect_any_instance_of(NewRelic::Agent::Transaction).to receive(:commit!)
-        .with("Controller/Web/Controllers/AdminPanel/CustomersDatabase/Index")
+        .with('Controller/Web/Controllers/AdminPanel/CustomersDatabase/Index/call')
 
       response
     end

@@ -21,12 +21,28 @@ module NewRelic
 
         private
 
+        TRANSACTION_NAME_JOINER = '/'
+
         def _trace_options(params)
           {
             category: :controller,
+            class_name: class_name,
+            name: path_segments.join(TRANSACTION_NAME_JOINER),
             request: self,
             params: params.to_h
           }
+        end
+
+        def transaction_name
+          [class_name, path_name].join(TRANSACTION_NAME_JOINER)
+        end
+
+        def class_name
+          self.class.name.split('::').join(TRANSACTION_NAME_JOINER)
+        end
+
+        def path_segments
+          ['call']
         end
       end
     end

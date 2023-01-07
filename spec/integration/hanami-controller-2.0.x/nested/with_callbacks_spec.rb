@@ -11,7 +11,7 @@ describe '/nested/with_callbacks' do
 
   it 'traces the action with amended options (corrected name, etc.)' do
     expect_any_instance_of(NewRelic::Agent::Transaction).to receive(:commit!)
-      .with('Controller/Nested::WithCallbacks')
+      .with('Controller/Nested/WithCallbacks/call')
 
     response
   end

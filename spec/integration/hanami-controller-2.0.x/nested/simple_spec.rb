@@ -11,7 +11,7 @@ describe '/nested/simple' do
 
   it 'traces the action with amended options (corrected name, etc.)' do
     expect_any_instance_of(NewRelic::Agent::Transaction).to receive(:commit!)
-      .with('Controller/Nested::Simple')
+      .with('Controller/Nested/Simple/call')
 
     response
   end
