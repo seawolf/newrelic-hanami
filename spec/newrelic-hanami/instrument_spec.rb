@@ -10,23 +10,6 @@ describe NewRelic::Agent::Instrumentation::Hanami do
   let(:request_params) { {} }
   let(:response)       { instance.call(request_params) }
 
-  shared_examples 'a Hanami::Action' do
-    it 'passes-through the response status code' do
-      expect(response.status).to eq(200)
-    end
-
-    it 'passes-through the response headers' do
-      expect(response.headers).to eq({
-                                       'Content-Length' => response.body.first.length.to_s,
-                                       'Content-Type' => 'application/octet-stream; charset=utf-8'
-                                     })
-    end
-
-    it 'passes-through the response body' do
-      expect(response.body).to eq(['hello'])
-    end
-  end
-
   context 'with a top-level action class' do
     let(:klass) do
       Class.new(Hanami::Action) do
@@ -42,12 +25,12 @@ describe NewRelic::Agent::Instrumentation::Hanami do
 
     it 'traces the action with amended options (corrected name, etc.)' do
       expect_any_instance_of(NewRelic::Agent::Transaction).to receive(:commit!)
-        .with("Controller/Web::Controllers::CustomersDatabase::Index")
+        .with("Controller/Web/Controllers/CustomersDatabase/Index")
 
       response
     end
 
-    it_behaves_like 'a Hanami::Action'
+    it_behaves_like :a_web_request, body: ['hello']
   end
 
   context 'with a nested action class' do
@@ -65,11 +48,11 @@ describe NewRelic::Agent::Instrumentation::Hanami do
 
     it 'traces the action with amended options (corrected name, etc.)' do
       expect_any_instance_of(NewRelic::Agent::Transaction).to receive(:commit!)
-        .with("Controller/Web::Controllers::AdminPanel::CustomersDatabase::Index")
+        .with("Controller/Web/Controllers/AdminPanel/CustomersDatabase/Index")
 
       response
     end
 
-    it_behaves_like 'a Hanami::Action'
+    it_behaves_like :a_web_request, body: ['hello']
   end
 end

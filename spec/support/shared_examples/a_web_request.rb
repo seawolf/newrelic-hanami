@@ -6,8 +6,14 @@ shared_examples :a_web_request do |**args|
   end
 
   it 'passes-through the response headers' do
+    length = if args[:body].is_a?(Array)
+               args[:body].first.length
+             else
+               args[:body].length
+             end
+
     expect(response.headers).to eq({
-                                     'Content-Length' => args[:body].length.to_s,
+                                     'Content-Length' => length.to_s,
                                      'Content-Type' => 'application/octet-stream; charset=utf-8'
                                    })
   end
