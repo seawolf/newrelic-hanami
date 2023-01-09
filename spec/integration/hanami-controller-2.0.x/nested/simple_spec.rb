@@ -30,7 +30,7 @@ describe '/nested/simple' do
 
     # Ordered by finishing time; the parent starts first but finishes last
     expect(segments).to eq([
-                             # { parent: 'Controller/Nested/Simple/call', name: 'handle' },
+                             { parent: 'Controller/Nested/Simple/call', name: 'Controller/Nested/Simple/handle' },
                              { parent: nil, name: 'Controller/Nested/Simple/call' }
                            ])
   end

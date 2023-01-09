@@ -20,6 +20,13 @@ module NewRelic
             params: params.to_h
           }
         end
+
+        def class_name
+          NewRelic::Agent::Transaction
+            .tl_current
+            &.transaction_name
+            &.delete_suffix('/call')
+        end
       end
     end
   end

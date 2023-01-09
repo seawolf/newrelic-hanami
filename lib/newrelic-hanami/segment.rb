@@ -8,8 +8,11 @@ module NewRelic
         module_function
 
         def segment_options(path_segments)
+          # place within the current Transaction
+          path_segments.unshift Transaction.class_name
+
           {
-            name: path_segments.join(TRANSACTION_NAME_JOINER)
+            name: path_segments.compact.join(TRANSACTION_NAME_JOINER)
           }
         end
 

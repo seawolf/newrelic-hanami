@@ -50,18 +50,27 @@ module NewRelic
           end
         end
 
+        # Add one segment per Hanami::Action to cover the `handle` method,
+        # as with the `before`/`after` callbacks within the `call` transaction.
+        # Applications inherit from / override Hanami::Action#handle without
+        # calling `super`, so any modifications to the `handle` definition will
+        # not take effect. Instrumentation must be added after application code
+        # is defined, achieved with a post-inheritence hook.
         module Handle
-          # This doesn't work because:
-          # 1. Hanami framework is loaded, and defines the classes
-          # 2. This instrumentation is loaded, overriding the Hanami classes
-          # 3. the application is loaded, with the endpoint's #handle overriding the instrumentation
-          # It needs to add to the application, not add to the framework.
+          def inherited(action_class)
+            super
 
-          def handle(*)
-            segment_options = _segment_options([:handle])
+            action_class.prepend(Instrumentation)
+          end
 
-            Segment.in_segment(**segment_options) do
-              super
+          # The real instrumentation of the `handle` methods.
+          module Instrumentation
+            def handle(request, response)
+              segment_options = Segment.segment_options([:handle])
+
+              Segment.in_segment(**segment_options) do
+                super(request, response)
+              end
             end
           end
         end
@@ -80,12 +89,26 @@ DependencyDetection.defer do
   end
 
   executes do
-    NewRelic::Agent.logger.info 'Installing Hanami instrumentation'
+    NewRelic::Agent.logger.info 'Installing Hanami instrumentation: Call'
+    Hanami::Action.prepend(NewRelic::Agent::Instrumentation::Hanami::Call)
   end
 
   executes do
-    Hanami::Action.prepend(NewRelic::Agent::Instrumentation::Hanami::Call)
+    NewRelic::Agent.logger.info 'Installing Hanami instrumentation: Callbacks'
     Hanami::Action.prepend(NewRelic::Agent::Instrumentation::Hanami::Callbacks)
+  end
+
+  executes do
+    NewRelic::Agent.logger.info 'Installing Hanami instrumentation: Handle'
     Hanami::Action.extend(NewRelic::Agent::Instrumentation::Hanami::Handle)
+  end
+
+  executes do
+    ObjectSpace.each_object(Hanami::Action.singleton_class).each do |child|
+      next if child == Hanami::Action
+
+      NewRelic::Agent.logger.info "Installing Hanami instrumentation: #{child.name}#handle"
+      child.prepend(NewRelic::Agent::Instrumentation::Hanami::Handle::Instrumentation)
+    end
   end
 end

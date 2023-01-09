@@ -30,9 +30,9 @@ describe '/with_callbacks' do
 
     # Ordered by finishing time; the parent starts first but finishes last
     expect(segments).to eq([
-                             { parent: 'Controller/WithCallbacks/call', name: 'before' },
-                             # { parent: 'Controller/WithCallbacks/call', name: 'handle' },
-                             { parent: 'Controller/WithCallbacks/call', name: 'after' },
+                             { parent: 'Controller/WithCallbacks/call', name: 'Controller/WithCallbacks/before' },
+                             { parent: 'Controller/WithCallbacks/call', name: 'Controller/WithCallbacks/handle' },
+                             { parent: 'Controller/WithCallbacks/call', name: 'Controller/WithCallbacks/after' },
                              { parent: nil, name: 'Controller/WithCallbacks/call' }
                            ])
   end
